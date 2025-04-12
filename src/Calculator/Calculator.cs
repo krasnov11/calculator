@@ -12,7 +12,7 @@ namespace Calculations
     /// </summary>
     public class Calculator
     {
-        private readonly CmdBase _cmd;
+        private readonly ICmdInvoker _cmd;
 
         /// <summary>
         /// ctor
@@ -23,7 +23,7 @@ namespace Calculations
         {
             var tokens = text.GetCalculatorTokens();
             var ast = AstBuilder.BuildAst(tokens);
-            _cmd = CmdBuilder.Build(ast);
+            _cmd = CmdBuilder.BuildCmdInvoker(ast);
         }
 
         /// <summary>
@@ -45,5 +45,10 @@ namespace Calculations
         {
             return _cmd.Calculate(variables ?? EmptyVariableValueProvider.Instance);
         }
+
+        /// <summary>
+        /// Имена используемых переменных
+        /// </summary>
+        public IReadOnlyList<string> Variables => _cmd.Variables;
     }
 }

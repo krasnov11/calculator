@@ -21,7 +21,7 @@ namespace Calculator.Tests
 
             var tokens = text.GetCalculatorTokens();
             var ast = AstBuilder.BuildAst(tokens);
-            var cmd = CmdBuilder.Build(ast);
+            var cmd = CmdBuilder.BuildCmdInvoker(ast);
 
             var result = cmd.Calculate(EmptyVariableValueProvider.Instance);
 
@@ -35,7 +35,12 @@ namespace Calculator.Tests
         {
             var tokens = "a + b/(2 + 7) - a*b".GetCalculatorTokens();
             var ast = AstBuilder.BuildAst(tokens);
-            var cmd = CmdBuilder.Build(ast);
+            var cmd = CmdBuilder.BuildCmdInvoker(ast);
+
+            foreach (var v in cmd.Variables)
+            {
+                Console.WriteLine(v);
+            }
 
             var variables = new Dictionary<string, decimal>()
             {
@@ -48,6 +53,31 @@ namespace Calculator.Tests
             Console.WriteLine(result);
 
             Assert.That(result, Is.EqualTo(-66m));
+        }
+
+        [Test]
+        public void CalculateWithVarsTest2()
+        {
+            var tokens = "a + b/(2 + 7) - a*b".GetCalculatorTokens();
+            var ast = AstBuilder.BuildAst(tokens);
+            var cmd = CmdBuilder.BuildCmdInvoker(ast);
+
+            var variables = new Dictionary<string, decimal>();
+            foreach (var v in cmd.Variables)
+            {
+                var val = Random.Shared.Next() * 0.01m;
+                Console.WriteLine($"{v}: {val}");
+                variables[v] = val;
+            }
+
+            var result = cmd.Calculate(variables.AsVariableValueProvider());
+
+            Console.WriteLine(result);
+
+            var a = variables["a"];
+            var b = variables["b"];
+
+            Assert.That(result, Is.EqualTo(a + b / (2 + 7) - a * b));
         }
     }
 }
