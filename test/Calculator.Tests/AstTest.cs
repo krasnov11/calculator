@@ -7,10 +7,10 @@ namespace Calculator.Tests
     [TestFixture]
     public class AstTest
     {
-        [TestCase("1 + 2", "3")]
-        [TestCase("(1 + 2)", "3")]
-        [TestCase("(1 + 2)*6 - (14 - 4) / 2 - 0.5", "12.5")]
-        [TestCase("-(1 + 2)", "-3")]
+        [TestCase("1 + 2", "(1 + 2)")]
+        [TestCase("(1 + 2)", "(1 + 2)")]
+        [TestCase("(1 + 2)*6 - (14 - 4) / 2 - 0.5", "((((1 + 2) * 6) - ((14 - 4) / 2)) - 0.5)")]
+        [TestCase("-(1 + 2)", "-(1 + 2)")]
         [TestCase("-1", "-1")]
         public void GetAstTest(string text, string result)
         {
@@ -22,7 +22,10 @@ namespace Calculator.Tests
 
             var ast = AstBuilder.BuildAst(tokens);
 
-            Console.WriteLine(ast);
+            var expression = ast.ToString();
+            Console.WriteLine(expression);
+
+            Assert.That(result, Is.EqualTo(expression));
         }
     }
 }
