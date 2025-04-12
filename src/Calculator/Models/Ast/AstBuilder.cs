@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Calculations.Models.Ast
 {
-    public class AstCalculator
+    public class AstBuilder
     {
         private readonly IReadOnlyList<TokenInfo> _tokens;
         private int _tokenIndex;
@@ -12,18 +12,18 @@ namespace Calculations.Models.Ast
         /// ctor
         /// </summary>
         /// <param name="tokenSequence">Токены</param>
-        private AstCalculator(IReadOnlyList<TokenInfo> tokenSequence)
+        private AstBuilder(IReadOnlyList<TokenInfo> tokenSequence)
         {
             _tokens = tokenSequence ?? throw new ArgumentNullException(nameof(tokenSequence));
         }
 
-        public static AstBaseNode GetAst(IReadOnlyList<TokenInfo> tokenSequence)
+        public static AstBaseNode BuildAst(IReadOnlyList<TokenInfo> tokenSequence)
         {
-            var calc = new AstCalculator(tokenSequence);
-            return calc.CreateAst();
+            var builder = new AstBuilder(tokenSequence);
+            return builder.Build();
         }
 
-        public AstBaseNode CreateAst()
+        public AstBaseNode Build()
         {
             _tokenIndex = -1;
             var value = AstExpression();

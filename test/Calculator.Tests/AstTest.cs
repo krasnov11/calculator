@@ -5,7 +5,7 @@ using Calculations.Models.Ast;
 namespace Calculator.Tests
 {
     [TestFixture]
-    public class AstCalculatorTest
+    public class AstTest
     {
         [TestCase("1 + 2", "3")]
         [TestCase("(1 + 2)", "3")]
@@ -20,7 +20,7 @@ namespace Calculator.Tests
                 Console.WriteLine($"{ti.Token}: '{ti.Value}'");
             }
 
-            var ast = AstCalculator.GetAst(tokens);
+            var ast = AstBuilder.BuildAst(tokens);
 
             Console.WriteLine(ast);
         }
