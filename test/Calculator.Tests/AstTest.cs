@@ -11,6 +11,7 @@ namespace Calculator.Tests
         [TestCase("(1 + 2)", "(1 + 2)")]
         [TestCase("(1 + 2)*6 - (14 - 4) / 2 - 0.5", "((((1 + 2) * 6) - ((14 - 4) / 2)) - 0.5)")]
         [TestCase("-(1 + 2)", "-(1 + 2)")]
+        [TestCase("-(((1 + 2)))", "-(1 + 2)")]
         [TestCase("-1", "-1")]
         public void GetAstTest(string text, string result)
         {

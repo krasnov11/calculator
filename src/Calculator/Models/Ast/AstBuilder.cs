@@ -37,7 +37,7 @@ namespace Calculations.Models.Ast
         private AstBaseNode AstExpression()
         {
             var root = AstOperand();
-            AstBinaryOperator? lastFoundOperator = null;
+            AstBinOperator? lastFoundOperator = null;
 
             while (IfNextToken(Tokens.Operator))
             {
@@ -50,8 +50,8 @@ namespace Calculations.Models.Ast
                 {
                     case "+":
                         // new root
-                        lastFoundOperator = new AstBinaryOperator(
-                            AstBinaryOperatorType.Plus,
+                        lastFoundOperator = new AstBinOperator(
+                            AstBinOperatorType.Plus,
                             root,
                             nextOperand);
                         root = lastFoundOperator;
@@ -59,8 +59,8 @@ namespace Calculations.Models.Ast
 
                     case "-":
                         // new root
-                        lastFoundOperator = new AstBinaryOperator(
-                            AstBinaryOperatorType.Minus,
+                        lastFoundOperator = new AstBinOperator(
+                            AstBinOperatorType.Minus,
                             root,
                             nextOperand);
                         root = lastFoundOperator;
@@ -70,8 +70,8 @@ namespace Calculations.Models.Ast
                         if (lastFoundOperator == null)
                         {
                             // new root
-                            lastFoundOperator = new AstBinaryOperator(
-                                AstBinaryOperatorType.Mult,
+                            lastFoundOperator = new AstBinOperator(
+                                AstBinOperatorType.Mult,
                                 root,
                                 nextOperand);
                             root = lastFoundOperator;
@@ -80,8 +80,8 @@ namespace Calculations.Models.Ast
                         {
                             // modify last leafs
 
-                            var newOper = new AstBinaryOperator(
-                                AstBinaryOperatorType.Mult,
+                            var newOper = new AstBinOperator(
+                                AstBinOperatorType.Mult,
                                 lastFoundOperator.RightOperand,
                                 nextOperand);
 
@@ -94,8 +94,8 @@ namespace Calculations.Models.Ast
                         if (lastFoundOperator == null)
                         {
                             // new root
-                            lastFoundOperator = new AstBinaryOperator(
-                                AstBinaryOperatorType.Div,
+                            lastFoundOperator = new AstBinOperator(
+                                AstBinOperatorType.Div,
                                 root,
                                 nextOperand);
                             root = lastFoundOperator;
@@ -104,8 +104,8 @@ namespace Calculations.Models.Ast
                         {
                             // modify last leafs
 
-                            var newOper = new AstBinaryOperator(
-                                AstBinaryOperatorType.Div,
+                            var newOper = new AstBinOperator(
+                                AstBinOperatorType.Div,
                                 lastFoundOperator.RightOperand,
                                 nextOperand);
 
