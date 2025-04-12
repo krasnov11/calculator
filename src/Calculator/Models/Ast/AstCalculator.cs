@@ -12,14 +12,21 @@ namespace Calculations.Models.Ast
         /// ctor
         /// </summary>
         /// <param name="tokenSequence">Токены</param>
-        public AstCalculator(IReadOnlyList<TokenInfo> tokenSequence)
+        private AstCalculator(IReadOnlyList<TokenInfo> tokenSequence)
         {
             _tokens = tokenSequence ?? throw new ArgumentNullException(nameof(tokenSequence));
         }
 
-        public AstBaseNode GetAst()
+        public static AstBaseNode GetAst(IReadOnlyList<TokenInfo> tokenSequence)
         {
-            var value = CalcExpression();
+            var calc = new AstCalculator(tokenSequence);
+            return calc.CreateAst();
+        }
+
+        public AstBaseNode CreateAst()
+        {
+            _tokenIndex = -1;
+            var value = AstExpression();
 
             if (NextToken())
                 throw new InvalidOperationException("There are rest of expression");
@@ -27,93 +34,107 @@ namespace Calculations.Models.Ast
             return value;
         }
 
-        private AstBaseNode CalcExpression()
+        private AstBaseNode AstExpression()
         {
-            return null;
-
-            /*var values = new List<decimal>();
-            var operators = new List<string>();
-
-            var op1 = CalculateOperand();
-            values.Add(op1);
+            var root = AstOperand();
+            AstBinaryOperator? lastFoundOperator = null;
 
             while (IfNextToken(Tokens.Operator))
             {
                 NextToken();
                 var op = CurrentValue();
 
-                operators.Add(op);
-                op1 = CalculateOperand();
-                values.Add(op1);
+                var nextOperand = AstOperand();
+
+                switch (op)
+                {
+                    case "+":
+                        // new root
+                        lastFoundOperator = new AstBinaryOperator(
+                            AstBinaryOperatorType.Plus,
+                            root,
+                            nextOperand);
+                        root = lastFoundOperator;
+                        break;
+
+                    case "-":
+                        // new root
+                        lastFoundOperator = new AstBinaryOperator(
+                            AstBinaryOperatorType.Minus,
+                            root,
+                            nextOperand);
+                        root = lastFoundOperator;
+                        break;
+
+                    case "*":
+                        if (lastFoundOperator == null)
+                        {
+                            // new root
+                            lastFoundOperator = new AstBinaryOperator(
+                                AstBinaryOperatorType.Mult,
+                                root,
+                                nextOperand);
+                            root = lastFoundOperator;
+                        }
+                        else
+                        {
+                            // modify last leafs
+
+                            var newOper = new AstBinaryOperator(
+                                AstBinaryOperatorType.Mult,
+                                lastFoundOperator.RightOperand,
+                                nextOperand);
+
+                            lastFoundOperator.SetRightOperand(newOper);
+                            lastFoundOperator = newOper;
+                        }
+                        break;
+
+                    case "/":
+                        if (lastFoundOperator == null)
+                        {
+                            // new root
+                            lastFoundOperator = new AstBinaryOperator(
+                                AstBinaryOperatorType.Div,
+                                root,
+                                nextOperand);
+                            root = lastFoundOperator;
+                        }
+                        else
+                        {
+                            // modify last leafs
+
+                            var newOper = new AstBinaryOperator(
+                                AstBinaryOperatorType.Div,
+                                lastFoundOperator.RightOperand,
+                                nextOperand);
+
+                            lastFoundOperator.SetRightOperand(newOper);
+                            lastFoundOperator = newOper;
+                        }
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Operator '{op}' is not supported");
+                }
             }
 
-            while (operators.Count > 0)
-            {
-                var i = 0;
-                while (i < operators.Count)
-                {
-                    var oper = operators[i];
-                    switch (oper)
-                    {
-                        case "*":
-                            values[i] *= values[i + 1];
-                            values.RemoveAt(i + 1);
-                            operators.RemoveAt(i);
-                            break;
-
-                        case "/":
-                            values[i] /= values[i + 1];
-                            values.RemoveAt(i + 1);
-                            operators.RemoveAt(i);
-                            break;
-
-                        default:
-                            ++i;
-                            break;
-                    }
-                }
-
-                while (operators.Count > 0)
-                {
-                    var oper = operators[0];
-                    switch (oper)
-                    {
-                        case "+":
-                            values[0] += values[1];
-                            values.RemoveAt(1);
-                            operators.RemoveAt(0);
-                            break;
-
-                        case "-":
-                            values[0] -= values[1];
-                            values.RemoveAt(1);
-                            operators.RemoveAt(0);
-                            break;
-
-                        default:
-                            throw new InvalidOperationException($"Unexpected operator '{oper}'");
-                    }
-                }
-            }
-
-            return values[0];*/
+            return root;
         }
 
-        private decimal CalculateOperand()
+        private AstBaseNode AstOperand()
         {
-            return 0;
-
-            /*if (!NextToken())
+            if (!NextToken())
                 throw new InvalidOperationException("Missing operand");
 
-            var sign = 1;
+            var unaryMinus = false;
             if (IfToken(Tokens.Operator))
             {
                 var oper = CurrentValue();
                 switch (oper)
                 {
                     case "+": break;
-                    case "-": sign = -1; break;
+                    case "-": unaryMinus = true; break;
                     default:
                         throw new InvalidOperationException($"Unexpected operator '{oper}'");
                 }
@@ -125,42 +146,43 @@ namespace Calculations.Models.Ast
             switch (CurrentToken())
             {
                 case Tokens.Number:
-                    return sign * CalcNumber();
+                    return unaryMinus 
+                        ? new AstUnaryMinusOperator(AstConstant())
+                        : AstConstant();
 
                 case Tokens.Variable:
-                    return sign * CalcVariable();
+                    return unaryMinus 
+                        ? new AstUnaryMinusOperator(AstVariable())
+                        : AstVariable();
 
                 case Tokens.LeftBracket:
-                    var expResult = CalcExpression();
+                    var expResult = AstExpression();
                     if (!NextToken())
                         throw new InvalidOperationException("Expected ')'");
                     RequiredToken(Tokens.RightBracket);
-                    return sign * expResult;
+                    return unaryMinus 
+                        ? new AstUnaryMinusOperator(expResult)
+                        : expResult;
 
                 default:
                     throw new InvalidOperationException($"Unexpected token '{CurrentToken()}'");
-            }*/
+            }
         }
 
-        private decimal CalcVariable()
+        private AstVariableNode AstVariable()
         {
-            return 0;
-
-            /*var varName = CurrentValue();
-            if (!_variables.TryGetValue(varName, out var value))
-                throw new InvalidOperationException($"Variable '{varName}' is not specified");
-
-            return value;*/
+            var varName = CurrentValue();
+            return new AstVariableNode(varName);
         }
 
-        private decimal CalcNumber()
+        private AstConstValueNode AstConstant()
         {
             if (!decimal.TryParse(
                     CurrentValue(), NumberStyles.Float | NumberStyles.Integer,
                     CultureInfo.InvariantCulture, out var result))
                 throw new InvalidOperationException($"Can't parse value '{CurrentValue()}' as decimal");
 
-            return result;
+            return new AstConstValueNode(result);
         }
 
         private bool NextToken()

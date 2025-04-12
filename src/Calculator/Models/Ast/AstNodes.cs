@@ -1,4 +1,6 @@
-﻿namespace Calculations.Models.Ast
+﻿using System.Globalization;
+
+namespace Calculations.Models.Ast
 {
     /// <summary>
     /// base node
@@ -19,21 +21,23 @@
     /// <summary>
     /// unary operator
     /// </summary>
-    public class AstUnaryOperator : AstNodeOperator
+    public class AstUnaryMinusOperator : AstNodeOperator
     {
-        public AstUnaryOperator(AstUnaryOperatorType operatorType, AstBaseNode operand)
+        public AstUnaryMinusOperator(AstBaseNode operand)
         {
-            OperatorType = operatorType;
             Operand = operand;
         }
-
-        public AstUnaryOperatorType OperatorType { get; }
 
         public AstBaseNode Operand { get; }
 
         public override IEnumerable<AstBaseNode> GetChild()
         {
             yield return Operand;
+        }
+
+        public override string ToString()
+        {
+            return $"-{Operand}";
         }
     }
 
@@ -52,12 +56,33 @@
         public AstBinaryOperatorType OperatorType { get; }
 
         public AstBaseNode LeftOperand { get; }
-        public AstBaseNode RightOperand { get; }
+        public AstBaseNode RightOperand { get; private set; }
 
         public override IEnumerable<AstBaseNode> GetChild()
         {
             yield return LeftOperand;
             yield return RightOperand;
+        }
+
+        public void SetRightOperand(AstBaseNode node)
+        {
+            RightOperand = node ?? throw new ArgumentNullException(nameof(node));
+        }
+
+        public override string ToString()
+        {
+            var op = ' ';
+            switch (OperatorType)
+            {
+                case AstBinaryOperatorType.Plus: op = '+'; break;
+                case AstBinaryOperatorType.Minus: op = '-'; break;
+                case AstBinaryOperatorType.Mult: op = '*'; break;
+                case AstBinaryOperatorType.Div: op = '/'; break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return $"({LeftOperand} {op} {RightOperand})";
         }
     }
 
@@ -72,6 +97,11 @@
         }
 
         public decimal Value { get; }
+
+        public override string ToString()
+        {
+            return Value.ToString(CultureInfo.InvariantCulture);
+        }
     }
 
     /// <summary>
@@ -85,5 +115,10 @@
         }
 
         public string Name { get; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

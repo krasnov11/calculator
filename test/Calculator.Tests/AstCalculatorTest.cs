@@ -1,5 +1,6 @@
 ﻿using System;
 using Calculations.Models;
+using Calculations.Models.Ast;
 
 namespace Calculator.Tests
 {
@@ -18,6 +19,10 @@ namespace Calculator.Tests
             {
                 Console.WriteLine($"{ti.Token}: '{ti.Value}'");
             }
+
+            var ast = AstCalculator.GetAst(tokens);
+
+            Console.WriteLine(ast);
         }
     }
 }
