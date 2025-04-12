@@ -1,0 +1,7 @@
+    expr      ::= operand [ op operand { op operand } ]
+    op        ::= '+' | '-'  | '*' | '/'
+    operand   ::= [ + | - ] ( number | var | '(' expr ')' )
+    number    ::= {0..9} [ '.' 0..9 {0..9} ]
+    var       ::= startVar { bodyVar }
+    startVar  ::= '_' | a..b
+    bodyVar   ::= '_' | a..b | 0..9
