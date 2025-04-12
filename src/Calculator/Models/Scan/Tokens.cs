@@ -3,7 +3,7 @@
     /// <summary>
     /// Токены разбора строки калькуляторв
     /// </summary>
-    public enum Tokens
+    internal enum Tokens
     {
         /// <summary>
         /// Число (Пример: 12 или 1.33)

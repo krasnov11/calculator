@@ -2,12 +2,12 @@
 
 namespace Calculations.Models.Ast
 {
-    public struct TokenInfo
+    internal struct AstTokenInfo
     {
         public readonly Tokens Token;
         public readonly string Value;
 
-        public TokenInfo(Tokens token, string value)
+        public AstTokenInfo(Tokens token, string value)
         {
             Token = token;
             Value = value;

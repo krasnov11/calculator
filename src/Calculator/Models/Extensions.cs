@@ -1,25 +1,31 @@
-﻿using Calculations.Models.Ast;
+﻿using Calculations.Abstractions;
+using Calculations.Models.Ast;
 using Calculations.Models.Scan;
 
 namespace Calculations.Models
 {
     public static class Extensions
     {
-        public static IReadOnlyList<TokenInfo> GetCalculatorTokens(this string text)
+        internal static IReadOnlyList<AstTokenInfo> GetCalculatorTokens(this string text)
         {
-            var tokens = new List<TokenInfo>();
+            var tokens = new List<AstTokenInfo>();
 
             var scanner = new Scanner(text);
             while (scanner.Next())
             {
                 tokens.Add(
-                    new TokenInfo(scanner.GetToken(), scanner.GetTokenValue()));
+                    new AstTokenInfo(scanner.GetToken(), scanner.GetTokenValue()));
             }
 
             if (scanner.HasErrors || tokens.Count == 0)
                 throw new InvalidOperationException($"Invalid expression: '{text}'");
 
             return tokens.AsReadOnly();
+        }
+
+        public static IVariableValueProvider AsVariableValueProvider(this IReadOnlyDictionary<string, decimal> vars)
+        {
+            return new DictionaryVariableValueProvider(vars);
         }
     }
 }

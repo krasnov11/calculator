@@ -3,21 +3,21 @@ using System.Globalization;
 
 namespace Calculations.Models.Ast
 {
-    public class AstBuilder
+    internal class AstBuilder
     {
-        private readonly IReadOnlyList<TokenInfo> _tokens;
+        private readonly IReadOnlyList<AstTokenInfo> _tokens;
         private int _tokenIndex;
 
         /// <summary>
         /// ctor
         /// </summary>
         /// <param name="tokenSequence">Токены</param>
-        private AstBuilder(IReadOnlyList<TokenInfo> tokenSequence)
+        private AstBuilder(IReadOnlyList<AstTokenInfo> tokenSequence)
         {
             _tokens = tokenSequence ?? throw new ArgumentNullException(nameof(tokenSequence));
         }
 
-        public static AstBaseNode BuildAst(IReadOnlyList<TokenInfo> tokenSequence)
+        public static AstBaseNode BuildAst(IReadOnlyList<AstTokenInfo> tokenSequence)
         {
             var builder = new AstBuilder(tokenSequence);
             return builder.Build();
@@ -51,7 +51,7 @@ namespace Calculations.Models.Ast
                     case "+":
                         // new root
                         lastFoundOperator = new AstBinOperator(
-                            AstBinOperatorType.Plus,
+                            BinOperatorType.Plus,
                             root,
                             nextOperand);
                         root = lastFoundOperator;
@@ -60,7 +60,7 @@ namespace Calculations.Models.Ast
                     case "-":
                         // new root
                         lastFoundOperator = new AstBinOperator(
-                            AstBinOperatorType.Minus,
+                            BinOperatorType.Minus,
                             root,
                             nextOperand);
                         root = lastFoundOperator;
@@ -71,7 +71,7 @@ namespace Calculations.Models.Ast
                         {
                             // new root
                             lastFoundOperator = new AstBinOperator(
-                                AstBinOperatorType.Mult,
+                                BinOperatorType.Mult,
                                 root,
                                 nextOperand);
                             root = lastFoundOperator;
@@ -81,7 +81,7 @@ namespace Calculations.Models.Ast
                             // modify last leafs
 
                             var newOper = new AstBinOperator(
-                                AstBinOperatorType.Mult,
+                                BinOperatorType.Mult,
                                 lastFoundOperator.RightOperand,
                                 nextOperand);
 
@@ -95,7 +95,7 @@ namespace Calculations.Models.Ast
                         {
                             // new root
                             lastFoundOperator = new AstBinOperator(
-                                AstBinOperatorType.Div,
+                                BinOperatorType.Div,
                                 root,
                                 nextOperand);
                             root = lastFoundOperator;
@@ -105,7 +105,7 @@ namespace Calculations.Models.Ast
                             // modify last leafs
 
                             var newOper = new AstBinOperator(
-                                AstBinOperatorType.Div,
+                                BinOperatorType.Div,
                                 lastFoundOperator.RightOperand,
                                 nextOperand);
 

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Calculations.Models.Ast
+﻿namespace Calculations.Models.Ast
 {
     /// <summary>
     /// unary operator
     /// </summary>
-    public class AstUnaryMinusOperator : AstBaseNode
+    internal class AstUnaryMinusOperator : AstBaseNode
     {
         public AstUnaryMinusOperator(AstBaseNode operand)
         {

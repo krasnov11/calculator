@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Calculations.Models.Ast
+﻿namespace Calculations.Models.Ast
 {
     /// <summary>
     /// bin operator
     /// </summary>
-    public class AstBinOperator : AstBaseNode
+    internal class AstBinOperator : AstBaseNode
     {
-        public AstBinOperator(AstBinOperatorType operatorType, AstBaseNode leftOperand, AstBaseNode rightOperand)
+        public AstBinOperator(BinOperatorType operatorType, AstBaseNode leftOperand, AstBaseNode rightOperand)
         {
             OperatorType = operatorType;
             LeftOperand = leftOperand;
             RightOperand = rightOperand;
         }
 
-        public AstBinOperatorType OperatorType { get; }
+        public BinOperatorType OperatorType { get; }
 
         public AstBaseNode LeftOperand { get; }
         public AstBaseNode RightOperand { get; private set; }
@@ -33,10 +27,10 @@ namespace Calculations.Models.Ast
             var op = ' ';
             switch (OperatorType)
             {
-                case AstBinOperatorType.Plus: op = '+'; break;
-                case AstBinOperatorType.Minus: op = '-'; break;
-                case AstBinOperatorType.Mult: op = '*'; break;
-                case AstBinOperatorType.Div: op = '/'; break;
+                case BinOperatorType.Plus: op = '+'; break;
+                case BinOperatorType.Minus: op = '-'; break;
+                case BinOperatorType.Mult: op = '*'; break;
+                case BinOperatorType.Div: op = '/'; break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

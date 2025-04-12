@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Calculations.Models.Ast
+﻿namespace Calculations.Models
 {
     /// <summary>
     /// Бинарный оператор
     /// </summary>
-    public enum AstBinOperatorType
+    internal enum BinOperatorType
     {
         /// <summary>
         /// operator +

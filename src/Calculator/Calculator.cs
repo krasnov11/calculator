@@ -12,7 +12,7 @@ namespace Calculations
     {
         private readonly Dictionary<string, decimal> _emptyVar = new Dictionary<string, decimal>(0);
         
-        private readonly IReadOnlyList<TokenInfo> _tokens;
+        private readonly IReadOnlyList<AstTokenInfo> _tokens;
 
         /// <summary>
         /// ctor
@@ -37,11 +37,11 @@ namespace Calculations
 
         private class InnerCalc
         {
-            private readonly IReadOnlyList<TokenInfo> _tokens;
+            private readonly IReadOnlyList<AstTokenInfo> _tokens;
             private readonly IReadOnlyDictionary<string, decimal> _variables;
             private int _tokenIndex;
 
-            public InnerCalc(IReadOnlyList<TokenInfo> tokens, IReadOnlyDictionary<string, decimal> variables)
+            public InnerCalc(IReadOnlyList<AstTokenInfo> tokens, IReadOnlyDictionary<string, decimal> variables)
             {
                 _tokens = tokens;
                 _variables = variables;
