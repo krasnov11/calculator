@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Calculations;
+using Calculations.Models.Scan;
 
 namespace Calculator.Tests
 {
@@ -143,15 +143,19 @@ namespace Calculator.Tests
         public void CalculateWithVarsTest8()
         {
             var calc = new Calculations.Calculator("a + b/-(2 + 7) - a * b");
-            var result = calc.Calculate(new Dictionary<string, decimal>()
+
+            var variables = new Dictionary<string, decimal>()
             {
                 ["a"] = 4,
                 ["b"] = 18,
-            });
+            };
 
-            Console.WriteLine(result);
-
-            Assert.That(result, Is.EqualTo(-70m));
+            for (var i = 0; i < 10; ++i)
+            {
+                var result = calc.Calculate(variables);
+                Console.WriteLine(result);
+                Assert.That(result, Is.EqualTo(-70m));
+            }
         }
 
         [Test]

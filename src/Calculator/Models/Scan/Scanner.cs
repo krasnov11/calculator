@@ -1,11 +1,11 @@
 ﻿using System.Text;
 
-namespace Calculations
+namespace Calculations.Models.Scan
 {
     /// <summary>
     /// Класс получения токенов для разбора выражения
     /// </summary>
-    public class Scanner
+    internal class Scanner
     {
         private readonly string _text;
         private Tokens _token;
