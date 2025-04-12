@@ -1,4 +1,4 @@
-﻿namespace Calculations
+﻿namespace Calculations.Models.Scan
 {
     /// <summary>
     /// Токены разбора строки калькуляторв

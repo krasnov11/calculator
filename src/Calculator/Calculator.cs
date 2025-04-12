@@ -1,4 +1,7 @@
-﻿using System.Globalization;
+﻿using Calculations.Models.Scan;
+using System.Globalization;
+using Calculations.Models;
+using Calculations.Models.Ast;
 
 namespace Calculations
 {
@@ -8,14 +11,8 @@ namespace Calculations
     public class Calculator
     {
         private readonly Dictionary<string, decimal> _emptyVar = new Dictionary<string, decimal>(0);
-
-        struct TokenInfo
-        {
-            public Tokens Token;
-            public string Value;
-        }
-
-        private readonly List<TokenInfo> _tokens;
+        
+        private readonly IReadOnlyList<TokenInfo> _tokens;
 
         /// <summary>
         /// ctor
@@ -24,20 +21,7 @@ namespace Calculations
         /// <exception cref="InvalidOperationException"></exception>
         public Calculator(string text)
         {
-            _tokens = new List<TokenInfo>();
-
-            var scanner = new Scanner(text);
-            while (scanner.Next())
-            {
-                _tokens.Add(new TokenInfo()
-                {
-                    Token = scanner.GetToken(),
-                    Value = scanner.GetTokenValue()
-                });
-            }
-
-            if (scanner.HasErrors || _tokens.Count == 0)
-                throw new InvalidOperationException($"Invalid expression: '{text}'");
+            _tokens = text.GetCalculatorTokens();
         }
 
         /// <summary>

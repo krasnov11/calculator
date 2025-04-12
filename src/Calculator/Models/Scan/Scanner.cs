@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Calculations
+namespace Calculations.Models.Scan
 {
     /// <summary>
     /// Класс получения токенов для разбора выражения
