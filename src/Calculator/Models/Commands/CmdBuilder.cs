@@ -6,18 +6,16 @@ namespace Calculations.Models.Commands
     internal class CmdBuilder
     {
         private readonly AstBaseNode _astRoot;
-        private readonly IVariableValueProvider _variableProv;
 
-        public static CmdBase Build(AstBaseNode astRoot, IVariableValueProvider? variableProv = null)
+        public static CmdBase Build(AstBaseNode astRoot)
         {
-            var builder = new CmdBuilder(astRoot, variableProv);
+            var builder = new CmdBuilder(astRoot);
             return builder.BuildCommand();
         }
 
-        private CmdBuilder(AstBaseNode astRoot, IVariableValueProvider? variableProv)
+        private CmdBuilder(AstBaseNode astRoot)
         {
             _astRoot = astRoot ?? throw new ArgumentNullException(nameof(astRoot));
-            _variableProv = variableProv ?? EmptyVariableValueProvider.Instance;
         }
 
         public CmdBase BuildCommand()
@@ -42,7 +40,7 @@ namespace Calculations.Models.Commands
                     return new CmdConstant(constant.Value);
 
                 case AstVariableNode variable:
-                    return new CmdVariable(_variableProv, variable.Name);
+                    return new CmdVariable(variable.Name);
 
                 default:
                     throw new NotImplementedException($"Node type '{astNode.GetType()}'");

@@ -1,4 +1,6 @@
-﻿namespace Calculations.Models.Commands
+﻿using Calculations.Abstractions;
+
+namespace Calculations.Models.Commands
 {
     internal class CmdBinOperator : CmdBase
     {
@@ -13,21 +15,21 @@
             _right = right ?? throw new ArgumentNullException(nameof(right));
         }
 
-        public override decimal Calculate()
+        public override decimal Calculate(IVariableValueProvider variables)
         {
             switch (_op)
             {
                 case BinOperatorType.Plus:
-                    return _left.Calculate() + _right.Calculate();
+                    return _left.Calculate(variables) + _right.Calculate(variables);
 
                 case BinOperatorType.Minus:
-                    return _left.Calculate() - _right.Calculate();
+                    return _left.Calculate(variables) - _right.Calculate(variables);
 
                 case BinOperatorType.Mult:
-                    return _left.Calculate() * _right.Calculate();
+                    return _left.Calculate(variables) * _right.Calculate(variables);
 
                 case BinOperatorType.Div:
-                    return _left.Calculate() / _right.Calculate();
+                    return _left.Calculate(variables) / _right.Calculate(variables);
 
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -23,7 +23,7 @@ namespace Calculator.Tests
             var ast = AstBuilder.BuildAst(tokens);
             var cmd = CmdBuilder.Build(ast);
 
-            var result = cmd.Calculate();
+            var result = cmd.Calculate(EmptyVariableValueProvider.Instance);
 
             Console.WriteLine($"Result: {result}");
 
@@ -31,17 +31,19 @@ namespace Calculator.Tests
         }
 
         [Test]
-        public void CalculateWithVarsTest5()
+        public void CalculateWithVarsTest1()
         {
             var tokens = "a + b/(2 + 7) - a*b".GetCalculatorTokens();
             var ast = AstBuilder.BuildAst(tokens);
-            var cmd = CmdBuilder.Build(ast, new Dictionary<string, decimal>()
+            var cmd = CmdBuilder.Build(ast);
+
+            var variables = new Dictionary<string, decimal>()
             {
                 ["a"] = 4,
                 ["b"] = 18,
-            }.AsVariableValueProvider());
+            }.AsVariableValueProvider();
 
-            var result = cmd.Calculate();
+            var result = cmd.Calculate(variables);
 
             Console.WriteLine(result);
 

@@ -4,18 +4,16 @@ namespace Calculations.Models.Commands
 {
     internal class CmdVariable : CmdBase
     {
-        private readonly IVariableValueProvider _prov;
         private readonly string _name;
 
-        public CmdVariable(IVariableValueProvider prov, string name)
+        public CmdVariable(string name)
         {
-            _prov = prov ?? throw new ArgumentNullException(nameof(prov));
-            _name = name ?? throw new ArgumentNullException(nameof(prov));
+            _name = name ?? throw new ArgumentNullException(nameof(name));
         }
 
-        public override decimal Calculate()
+        public override decimal Calculate(IVariableValueProvider variables)
         {
-            if (_prov.TryGetVariableValue(_name, out var value))
+            if (variables?.TryGetVariableValue(_name, out var value) == true)
                 return value;
 
             throw new InvalidOperationException($"Value of variable '{_name}' is not found");

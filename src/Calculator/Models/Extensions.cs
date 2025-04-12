@@ -23,9 +23,11 @@ namespace Calculations.Models
             return tokens.AsReadOnly();
         }
 
-        public static IVariableValueProvider AsVariableValueProvider(this IReadOnlyDictionary<string, decimal> vars)
+        public static IVariableValueProvider AsVariableValueProvider(this IReadOnlyDictionary<string, decimal>? vars)
         {
-            return new DictionaryVariableValueProvider(vars);
+            return vars == null 
+                ? EmptyVariableValueProvider.Instance
+                : new DictionaryVariableValueProvider(vars);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Calculations.Models.Commands
+﻿using Calculations.Abstractions;
+
+namespace Calculations.Models.Commands
 {
     internal class CmdConstant : CmdBase
     {
@@ -9,7 +11,7 @@
             _constant = constant;
         }
 
-        public override decimal Calculate()
+        public override decimal Calculate(IVariableValueProvider variables)
         {
             return _constant;
         }

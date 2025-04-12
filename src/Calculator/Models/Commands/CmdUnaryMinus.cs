@@ -1,4 +1,6 @@
-﻿namespace Calculations.Models.Commands
+﻿using Calculations.Abstractions;
+
+namespace Calculations.Models.Commands
 {
     internal class CmdUnaryMinus : CmdBase
     {
@@ -9,9 +11,9 @@
             _inner = inner;
         }
 
-        public override decimal Calculate()
+        public override decimal Calculate(IVariableValueProvider variables)
         {
-            return -1m * _inner.Calculate();
+            return -1m * _inner.Calculate(variables);
         }
     }
 }
