@@ -46,6 +46,11 @@ namespace Calculator.Tests
 
             Console.WriteLine(result);
 
+            foreach (var v in calc.Variables)
+            {
+                Console.WriteLine(v);
+            }
+
             Assert.That(result, Is.EqualTo(9m));
         }
 

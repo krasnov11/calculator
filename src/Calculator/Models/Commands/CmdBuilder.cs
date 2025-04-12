@@ -1,4 +1,5 @@
-﻿using Calculations.Abstractions;
+﻿using System.Collections.Immutable;
+using Calculations.Abstractions;
 using Calculations.Models.Ast;
 
 namespace Calculations.Models.Commands
@@ -6,21 +7,26 @@ namespace Calculations.Models.Commands
     internal class CmdBuilder
     {
         private readonly AstBaseNode _astRoot;
+        private readonly HashSet<string> _variables;
 
-        public static CmdBase Build(AstBaseNode astRoot)
+        public static ICmdInvoker BuildCmdInvoker(AstBaseNode astRoot)
         {
             var builder = new CmdBuilder(astRoot);
-            return builder.BuildCommand();
+            return builder.Build();
         }
 
         private CmdBuilder(AstBaseNode astRoot)
         {
             _astRoot = astRoot ?? throw new ArgumentNullException(nameof(astRoot));
+            _variables = new HashSet<string>();
         }
 
-        public CmdBase BuildCommand()
+        public ICmdInvoker Build()
         {
-            return CreateCommand(_astRoot);
+            var cmd = CreateCommand(_astRoot);
+            return new CmdInvoker(
+                _variables.ToImmutableList(),
+                cmd);
         }
 
         private CmdBase CreateCommand(AstBaseNode astNode)
@@ -40,6 +46,8 @@ namespace Calculations.Models.Commands
                     return new CmdConstant(constant.Value);
 
                 case AstVariableNode variable:
+                    if (!_variables.Contains(variable.Name))
+                        _variables.Add(variable.Name);
                     return new CmdVariable(variable.Name);
 
                 default:
